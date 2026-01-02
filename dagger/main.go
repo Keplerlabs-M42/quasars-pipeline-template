@@ -14,6 +14,10 @@ func (m *QuasarsPipelineTemplate) Build(
 	// +optional
 	// +default="1.24"
 	version string,
+
+	// +optional
+	// +default="."
+	mainFile string,
 ) *dagger.Container {
 	image := fmt.Sprintf("golang:%s", version)
 
@@ -21,7 +25,7 @@ func (m *QuasarsPipelineTemplate) Build(
 		From(image).
 		WithMountedDirectory("/src", src).
 		WithWorkdir("/src").
-		WithExec([]string{"go", "build", "-o", "build/"})
+		WithExec([]string{"go", "build", "-o", "build/", mainFile})
 }
 
 func (m *QuasarsPipelineTemplate) Lint(ctx context.Context, src *dagger.Directory) *dagger.Container {
