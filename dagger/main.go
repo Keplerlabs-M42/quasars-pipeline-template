@@ -3,13 +3,22 @@ package main
 import (
 	"context"
 	"dagger/quasars-pipeline-template/internal/dagger"
+	"fmt"
 )
 
 type QuasarsPipelineTemplate struct{}
 
-func (m *QuasarsPipelineTemplate) Build(ctx context.Context, src *dagger.Directory) *dagger.Container {
+func (m *QuasarsPipelineTemplate) Build(
+	src *dagger.Directory,
+
+	// +optional
+	// +default="1.24"
+	version string,
+) *dagger.Container {
+	image := fmt.Sprintf("golang:%s", version)
+
 	return dag.Container().
-		From("golang:1.24-alpine").
+		From(image).
 		WithMountedDirectory("/src", src).
 		WithWorkdir("/src").
 		WithExec([]string{"go", "build", "-o", "build/"})
